@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hotel Maintenance Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">HM</div>
+      <div>
+        <h1 data-t="title">Hotel Maintenance Console</h1>
+        <div class="sub" data-t="subtitle">211 apartments · work order tracking</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="sync-badge" id="syncBadge">•</span>
+      <button class="lang-toggle" id="langBtn" type="button">العربية</button>
+      <button class="btn-primary" id="newOrderBtn" type="button" data-t="newOrder">+ New order</button>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-view="dashboard" data-t="tabDashboard">Dashboard</button>
+    <button class="tab-btn" data-view="orders" data-t="tabOrders">Work Orders</button>
+    <button class="tab-btn" data-view="rooms" data-t="tabRooms">Rooms</button>
+    <button class="tab-btn" data-view="report" data-t="tabReport">Daily Report</button>
+    <button class="tab-btn" data-view="types" data-t="tabTypes">Types Reference</button>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <section class="view active" id="view-dashboard">
+    <div class="cards" id="statCards"></div>
+    <div class="panel">
+      <h2 data-t="priorityBreakdown">Priority breakdown</h2>
+      <div id="priorityRows"></div>
+    </div>
+    <div class="panel">
+      <h2 data-t="recentActivity">Recent work orders</h2>
+      <div class="tbl-wrap"><table id="recentTable"></table></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-orders">
+    <div class="toolbar">
+      <input type="text" id="searchBox" placeholder="Search by room, technician, note..." data-t-ph="searchPlaceholder">
+      <select id="statusFilter"></select>
+      <select id="priorityFilter"></select>
+    </div>
+    <div class="panel" style="padding:0;">
+      <div class="tbl-wrap"><table id="ordersTable"></table></div>
+      <div class="empty" id="ordersEmpty" style="display:none;" data-t="noOrders">No work orders match your filters.</div>
+    </div>
+  </section>
+
+  <section class="view" id="view-rooms">
+    <div class="toolbar">
+      <select id="roomTypeFilter"></select>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--teal-soft);"></i><span data-t="legendNone">No open issues</span></span>
+      <span><i style="background:var(--amber-soft);"></i><span data-t="legendProgress">In progress</span></span>
+      <span><i style="background:var(--red-soft);"></i><span data-t="legendPending">Pending</span></span>
+    </div>
+    <div class="rooms-grid" id="roomsGrid"></div>
+  </section>
+
+  <section class="view" id="view-report">
+    <div class="toolbar">
+      <input type="date" id="reportDate">
+      <button class="btn-ghost" id="printBtn" type="button" data-t="printReport">Print / Save PDF</button>
+    </div>
+    <div class="panel">
+      <div class="report-head">
+        <div>
+          <h2 id="reportHeading" data-t="tabReport">Daily Report</h2>
+          <div class="report-title" id="reportDateLabel"></div>
+        </div>
+      </div>
+      <div class="cards" id="reportCards"></div>
+      <div class="tbl-wrap"><table id="reportTable"></table></div>
+      <div class="empty" id="reportEmpty" style="display:none;" data-t="noOrders">No work orders match your filters.</div>
+    </div>
+  </section>
+
+  <section class="view" id="view-types">
+    <div id="typesList"></div>
+  </section>
+
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle" data-t="newOrderTitle">New work order</h3>
+    <input type="hidden" id="editId">
+    <div class="row2">
+      <div class="field">
+        <label data-t="fRoom">Apartment number</label>
+        <select id="fRoom"></select>
+      </div>
+      <div class="field">
+        <label data-t="fDate">Date reported</label>
+        <input type="date" id="fDate">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label data-t="fCategory">Category</label>
+        <select id="fCategory"></select>
+      </div>
+      <div class="field">
+        <label data-t="fPriority">Priority</label>
+        <select id="fPriority">
+          <option value="high">High</option>
+          <option value="med" selected>Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label data-t="fType">Issue / maintenance type</label>
+      <input type="text" id="fType" placeholder="e.g. Water leak fix">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label data-t="fStatus">Status</label>
+        <select id="fStatus">
+          <option value="pending" selected>Pending</option>
+          <option value="progress">In progress</option>
+          <option value="onhold">On hold</option>
+          <option value="done">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="field">
+        <label data-t="fCost">Cost (AED)</label>
+        <input type="number" id="fCost" min="0" placeholder="0">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label data-t="fTech">Technician</label>
+        <input type="text" id="fTech" placeholder="Name">
+      </div>
+      <div class="field">
+        <label data-t="fCompleted">Completion date</label>
+        <input type="date" id="fCompleted">
+      </div>
+    </div>
+    <div class="field">
+      <label data-t="fNotes">Notes</label>
+      <textarea id="fNotes"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="deleteBtn" type="button" style="display:none;color:var(--red);" data-t="delete">Delete</button>
+      <button class="btn-ghost" id="cancelBtn" type="button" data-t="cancel">Cancel</button>
+      <button class="btn-primary" id="saveBtn" type="button" data-t="save">Save order</button>
+    </div>
+    <div class="hint" data-t="storageHint">Live and shared with everyone using this app.</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="roomModalBg">
+  <div class="modal small">
+    <h3 id="roomModalTitle">Room</h3>
+    <div class="field">
+      <label data-t="roomType">Apartment type</label>
+      <select id="roomTypeSelect">
+        <option value="Studio">Studio</option>
+        <option value="1BR">One-Bedroom</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="roomCancelBtn" type="button" data-t="cancel">Cancel</button>
+      <button class="btn-primary" id="roomViewOrdersBtn" type="button" data-t="viewOrders">View work orders</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
