@@ -1,5 +1,5 @@
-const { getSupabase } = require('../_lib/supabaseClient');
-const { setCors, pickOrderFields } = require('../_lib/util');
+const { getSupabase } = require('../../_lib/supabaseClient');
+const { setCors, pickOrderFields } = require('../../_lib/util');
 
 module.exports = async (req, res) => {
   setCors(res);

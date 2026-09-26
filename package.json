@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "Hotel Maintenance Console - static frontend + Vercel serverless API backed by Supabase",
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4"
   }
