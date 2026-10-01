@@ -27,11 +27,7 @@ Deploy this repo to Vercel as-is and everyone who opens the URL — front desk, 
 │   │   └── [number].js      PATCH (change type)               → /api/rooms/:number
 │   └── report/
 │       └── index.js         GET (daily report)                → /api/report
-├── vercel.json
-├── package.json
-└── backend/          (optional) — a standalone Express version of the same API,
-                        for people who'd rather deploy to Render/Railway instead of
-                        Vercel. Not used by the Vercel deployment (see .vercelignore).
+└── package.json
 ```
 
 ## 1. Database (already set up)
@@ -73,11 +69,7 @@ If you see `FUNCTION_INVOCATION_FAILED`, it almost always means the two environm
 | GET | `/api/report?date=YYYY-MM-DD` | Daily report: totals + full order list for that date |
 | GET | `/api/health` | Health check |
 
-## 3. Alternative: Express + Render/Railway
-
-If you'd rather not use Vercel, the `/backend` folder has the same API built as a traditional always-on Express server, meant for Render or Railway, paired with the frontend also copied into `/backend`'s sibling — see `backend/README` notes in code comments. This path needs a separate static host for the frontend (Netlify/Vercel/GitHub Pages) since Express doesn't serve it. Most people should just use the Vercel path above — it's simpler (one deploy, no separate frontend/backend hosting).
-
-## 4. Local development
+## 3. Local development
 
 You need [Vercel CLI](https://vercel.com/docs/cli) to run the `/api` functions locally alongside the static frontend:
 
